@@ -130,11 +130,13 @@ pt00 = pt00.transpose()
 pt00['Марж.прибыль'] = pt00['Продажи'] + pt00['Себестоимость']
 
 # pt00 = pt00[pt00["Статья"]=="Продажи"]
-
+st.markdown("***Таблица продаж, себестоимости и марж.прибыли (тыс.руб.)***")
 st.table(pt00)
+
+st.markdown("***График продаж, себестоимости и марж.прибыли (тыс.руб.)***")
 st.bar_chart(pt00, stack=False, width=200, height=500)
-st.area_chart(pt00)
-st.line_chart(pt00)
+# st.area_chart(pt00)
+# st.line_chart(pt00)
 
 
 
