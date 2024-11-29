@@ -78,7 +78,10 @@ with st.sidebar:
 
 
 st.divider()
-st.subheader("Чтение файла zlsx")
+st.subheader("Чтение файла xlsx")
+# base1.xlsx
+
+df = pd.read_excel('base1.xlsx', sheet_name='base')
 
 
 
