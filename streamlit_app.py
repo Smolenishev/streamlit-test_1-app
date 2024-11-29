@@ -25,14 +25,14 @@ st.write(now_2)
 st.divider()
 st.subheader("Таблицы")
 
-df = pd.DataFrame({
+df1 = pd.DataFrame({
     'Наименование': ["Первый", "Второй"],
     'Значение': [10, 20]
 })
 
-st.table(df)
+st.table(df1)
 
-df2 = st.data_editor(df)
+df2 = st.data_editor(df1)
 
 #st.table(df2)
 
@@ -81,9 +81,64 @@ st.divider()
 st.subheader("Чтение файла xlsx")
 # base1.xlsx
 
-df3 = pd.read_excel('base1.xlsx', sheet_name='base')
+df = pd.read_excel('base1.xlsx', sheet_name='base')
 
 st.table(df3.head(2))
+
+st.divider()
+
+df.rename(columns={'Дата': 'DATA', 'Счет Дт': 'SD', 'Субконто1 Дт': 'SKD1', 'Субконто2 Дт': 'SKD2', 'Субконто3 Дт': 'SKD3', 'Счет Кт': 'SK', 
+        'Субконто1 Кт': 'SKK1', 'Субконто2 Кт': 'SKK2', 'Субконто3 Кт': 'SKK3', 'Сумма': 'SUMMA'}, inplace=True)
+
+df = df[(df['SK']=='90.01.1') | (df['SD']=='90.02.1')]
+
+df['ST'] = (df['SUMMA']/1000).round(2)
+df['DATA'] = pd.to_datetime(df['DATA'], dayfirst=True)
+df['Год']=pd.DatetimeIndex(df['DATA']).year.astype('object')
+df['Месяц'] = pd.DatetimeIndex(df['DATA']).month.astype('object')
+df['День'] = pd.DatetimeIndex(df['DATA']).day.astype('object')
+df['Квартал'] = pd.DatetimeIndex(df['DATA']).quarter.astype('object')
+df['YM'] = df['DATA'].dt.to_period('M')
+
+df = df[df['Год']>=2021]
+
+df['Статья'] = ''
+df.loc[df['SK']=='90.01.1', 'Статья'] = 'Продажи'
+df.loc[df['SD']=='90.02.1', 'Статья'] = 'Себестоимость'
+
+df['Номенклатура'] = ''
+df.loc[df['SK']=='90.01.1', 'Номенклатура'] = df['SKK3']
+df.loc[((df['SD']=='90.02.1') & (df['SK']=='41.01')), 'Номенклатура'] = df['SKK1']
+df.loc[((df['SD']=='90.02.1') & (df['SK']=='45.01')), 'Номенклатура'] = df['SKK2']
+
+df['ДС'] = 0
+df.loc[df['SK']=='90.01.1', 'ДС'] = df['ST'] /1.2
+df.loc[df['SD']=='90.02.1', 'ДС'] = df['ST']*-1
+
+df['Продажи'] = 0
+df.loc[df['SK']=='90.01.1', 'Продажи'] = df['ST'] /1.2
+
+df['Себестоимость'] = 0
+df.loc[df['SD']=='90.02.1', 'Себестоимость'] = df['ST']*-1
+
+pt00 = pd.pivot_table(df, index=['Статья'], values=['ДС'], columns=['Год'], aggfunc='sum', fill_value='', margins=False).round(2)
+
+pt00 = pt00['ДС']
+
+pt00 = pt00.transpose()
+
+pt00['Марж.прибыль'] = pt00['Продажи'] + pt00['Себестоимость']
+
+# pt00 = pt00[pt00["Статья"]=="Продажи"]
+
+st.table(pt00)
+st.bar_chart(pt00, stack=False, width=200, height=500)
+st.area_chart(pt00)
+st.line_chart(pt00)
+
+
+
+
 
 
 
