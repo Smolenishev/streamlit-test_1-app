@@ -39,5 +39,25 @@ df2 = st.data_editor(df)
 st.metric(label="Количество строк таблицы: ", value=len(df))
 st.metric(label="Сумма по столбцу Значение: ", value=df['Значение'].sum())
 
+st.divider()
+
+st.subheader("Графики")
+
+df3 = pd.DataFrame(
+    np.random.rand(10, 4),
+    columns=['A', 'B', 'C', 'D']
+)
+
+st.table(df3)
+st.area_chart(df3)
+st.line_chart(df3)
+st.scatter_chart(df3[['A', 'B']])
+
+st.divider()
+st.subheader("Изображение")
+st.image(os.path.join(os.getcwd(), "static", "otter.jpg"), width=100)
+
+st.divider()
+
 
 
