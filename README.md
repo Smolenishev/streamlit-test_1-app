@@ -2,6 +2,9 @@
 ```
 ⬆️ (Replace above with your app's name)
 ```
+ ## 2024-11-29
+ На основании:https://www.youtube.com/watch?v=d7fnzDQ5qM8&t=956s
+ 
 
 Description of the app ...
 
