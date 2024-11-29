@@ -81,7 +81,9 @@ st.divider()
 st.subheader("Чтение файла xlsx")
 # base1.xlsx
 
-df = pd.read_excel('base1.xlsx', sheet_name='base')
+df3 = pd.read_excel('base1.xlsx', sheet_name='base')
+
+st.table(df3.head(2))
 
 
 
