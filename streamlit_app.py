@@ -36,8 +36,8 @@ df2 = st.data_editor(df1)
 
 #st.table(df2)
 
-st.metric(label="Количество строк таблицы: ", value=len(df))
-st.metric(label="Сумма по столбцу Значение: ", value=df['Значение'].sum())
+st.metric(label="Количество строк таблицы: ", value=len(df1))
+st.metric(label="Сумма по столбцу Значение: ", value=df1['Значение'].sum())
 
 st.divider()
 
