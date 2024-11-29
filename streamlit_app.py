@@ -78,7 +78,7 @@ with st.sidebar:
 
 
 st.divider()
-st.subheader("Чтение файла xlsx")
+st.subheader("Чтение файла xlsx. Источник: ДЕМО-база")
 # base1.xlsx
 
 df = pd.read_excel('base1.xlsx', sheet_name='base')
@@ -129,7 +129,9 @@ pt00 = pt00.transpose()
 
 pt00['Марж.прибыль'] = pt00['Продажи'] + pt00['Себестоимость']
 
-# pt00 = pt00[pt00["Статья"]=="Продажи"]
+st.divider()
+st.subheader("Выходные таблицы и графики")
+
 st.markdown("***Таблица продаж, себестоимости и марж.прибыли (тыс.руб.)***")
 st.table(pt00)
 
@@ -138,6 +140,7 @@ st.bar_chart(pt00, stack=False, width=200, height=500)
 # st.area_chart(pt00)
 # st.line_chart(pt00)
 
+st.divider()
 
 
 
