@@ -22,6 +22,17 @@ now_2 = now.strftime("%Y-%m-%d %H:%M")
 
 st.write("Текущая дата и время: ", now_2)
 
+with st.sidebar:
+    st.header("Оглавление")
+
+st.sidebar.markdown('''
+    - [Введение](#section-1)
+    - [Продажи](#section-2) 
+    - [Маржинальный доход](#section-3)
+    - [Рабочий капитал](#section-4)
+    ''', unsafe_allow_html=True)
+
+
 st.divider()
 st.subheader("Таблицы")
 
@@ -73,8 +84,6 @@ with col2:
     st.write("Столбец 2")
 
 
-with st.sidebar:
-    st.header("Slidebar")
 
 
 st.divider()
