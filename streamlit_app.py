@@ -15,6 +15,8 @@ st.write('Hello world!')
 st.title("Тест страница изучения Streamlit")
 st.subheader("2024-11-29 12:30. Smolenishev Oleg")
 
+st.write("2024-11-30 10:35 работаю из браузера. Как лоально рабоать в своем VSC, что бы обновляля GitHub и потом уже Stremlit")
+
 now = datetime.now()
 
 now_2 = now.strftime("%Y-%m-%d %H:%M")
@@ -141,9 +143,3 @@ st.bar_chart(pt00, stack=False, width=200, height=500)
 # st.line_chart(pt00)
 
 st.divider()
-
-
-
-
-
-
