@@ -7,22 +7,20 @@ import os
 # import xlsxwriter
 # import openpyxl
 
-st.title('🎈 Streamlit-test_1/streamlit_app.py')
 
-st.write('Hello world!')
+st.title(':blue[Демонстрация возвожностей Streamlit для базовых дашбордов на основе данных из 1С]')
 
-#-----------------
-st.title("Тест страница изучения Streamlit")
+st.write('Сайт автора: [otter-finance.ru](https://otter-finance.ru)')
 st.subheader("2024-11-29 12:30. Smolenishev Oleg")
 
-st.write("2024-11-30 10:35 работаю из браузера. Как лоально рабоать в своем VSC, что бы обновляля GitHub и потом уже Stremlit")
+
 
 now = datetime.now()
 
 now_2 = now.strftime("%Y-%m-%d %H:%M")
 
-st.write(now)
-st.write(now_2)
+
+st.write("Текущая дата и время: ", now_2)
 
 st.divider()
 st.subheader("Таблицы")
