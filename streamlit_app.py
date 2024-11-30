@@ -34,54 +34,54 @@ st.sidebar.markdown('''
 
 
 st.divider()
-st.subheader("Таблицы")
+# st.subheader("Таблицы")
 
-df1 = pd.DataFrame({
-    'Наименование': ["Первый", "Второй"],
-    'Значение': [10, 20]
-})
+# df1 = pd.DataFrame({
+#     'Наименование': ["Первый", "Второй"],
+#     'Значение': [10, 20]
+# })
 
-st.table(df1)
+# st.table(df1)
 
-df2 = st.data_editor(df1)
+# df2 = st.data_editor(df1)
 
-#st.table(df2)
+# #st.table(df2)
 
-st.metric(label="Количество строк таблицы: ", value=len(df1))
-st.metric(label="Сумма по столбцу Значение: ", value=df1['Значение'].sum())
+# st.metric(label="Количество строк таблицы: ", value=len(df1))
+# st.metric(label="Сумма по столбцу Значение: ", value=df1['Значение'].sum())
 
-st.divider()
+# st.divider()
 
-st.subheader("Графики")
+# st.subheader("Графики")
 
-df3 = pd.DataFrame(
-    np.random.rand(10, 4),
-    columns=['A', 'B', 'C', 'D']
-)
+# df3 = pd.DataFrame(
+#     np.random.rand(10, 4),
+#     columns=['A', 'B', 'C', 'D']
+# )
 
-st.table(df3)
-st.area_chart(df3)
-st.line_chart(df3)
-st.scatter_chart(df3[['A', 'B']])
-
-
-st.divider()
-st.subheader("Слайдер")
-
-x = st.slider("Установить значениеЖ ", 1, 10)
-st.write("Установлено значение: ", x)
+# st.table(df3)
+# st.area_chart(df3)
+# st.line_chart(df3)
+# st.scatter_chart(df3[['A', 'B']])
 
 
-st.divider()
-st.subheader("Разделение на столбцы")
+# st.divider()
+# st.subheader("Слайдер")
 
-col1, col2 = st.columns(2)
+# x = st.slider("Установить значениеЖ ", 1, 10)
+# st.write("Установлено значение: ", x)
 
-with col1:
-    st.write("Столбец 1")
 
-with col2:
-    st.write("Столбец 2")
+# st.divider()
+# st.subheader("Разделение на столбцы")
+
+# col1, col2 = st.columns(2)
+
+# with col1:
+#     st.write("Столбец 1")
+
+# with col2:
+#     st.write("Столбец 2")
 
 
 
