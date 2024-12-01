@@ -7,12 +7,12 @@ import os
 # import xlsxwriter
 # import openpyxl
 
-
+st.set_page_config(page_title="Smolenishev / otter-finance.ru", layout="wide")
 
 st.title(':blue[Демонстрация возвожностей Streamlit для базовых дашбордов на основе данных из 1С]')
 
-st.write('Сайт автора: [otter-finance.ru](https://otter-finance.ru)')
-st.subheader("2024-11-29 12:30. Smolenishev Oleg")
+st.subheader('Сайт автора: [otter-finance.ru](https://otter-finance.ru)')
+
 
 
 
@@ -29,71 +29,19 @@ with st.sidebar:
 st.sidebar.markdown('''
     - [Источники](#section-1)
     - [Продажи и маржа](#section-2) 
-    - [Себестоимость](#section-3)
+    - [Анализ продаж по покупателям](#section-3)
     - [Рабочий капитал](#section-4)
     ''', unsafe_allow_html=True)
 
 
-st.divider()
-# st.subheader("Таблицы")
-
-# df1 = pd.DataFrame({
-#     'Наименование': ["Первый", "Второй"],
-#     'Значение': [10, 20]
-# })
-
-# st.table(df1)
-
-# df2 = st.data_editor(df1)
-
-# #st.table(df2)
-
-# st.metric(label="Количество строк таблицы: ", value=len(df1))
-# st.metric(label="Сумма по столбцу Значение: ", value=df1['Значение'].sum())
-
-# st.divider()
-
-# st.subheader("Графики")
-
-# df3 = pd.DataFrame(
-#     np.random.rand(10, 4),
-#     columns=['A', 'B', 'C', 'D']
-# )
-
-# st.table(df3)
-# st.area_chart(df3)
-# st.line_chart(df3)
-# st.scatter_chart(df3[['A', 'B']])
-
-
-# st.divider()
-# st.subheader("Слайдер")
-
-# x = st.slider("Установить значениеЖ ", 1, 10)
-# st.write("Установлено значение: ", x)
-
-
-# st.divider()
-# st.subheader("Разделение на столбцы")
-
-# col1, col2 = st.columns(2)
-
-# with col1:
-#     st.write("Столбец 1")
-
-# with col2:
-#     st.write("Столбец 2")
-
-
-
-
-st.divider()
+#---------------------------------------------------
 st.divider()
 st.subheader('Section 1')
 st.header(":blue[Источники данных]")
-st.subheader("Чтение файла xlsx. Источник: ДЕМО-база")
-# base1.xlsx
+st.subheader("Чтение файла xlsx с выгруженными бух. транзакциями из 1С. Источник: ДЕМО-база")
 
+
+#---------------------------------------------------
 df = pd.read_excel('base1.xlsx', sheet_name='base')
 
 st.table(df.head(2))
@@ -134,74 +82,98 @@ df.loc[df['SK']=='90.01.1', 'Продажи'] = df['ST'] /1.2
 df['Себестоимость'] = 0
 df.loc[df['SD']=='90.02.1', 'Себестоимость'] = df['ST']*-1
 
-pt00 = pd.pivot_table(df, index=['Статья'], values=['ДС'], columns=['Год'], aggfunc='sum', fill_value='', margins=False).round(2)
+# по годам
+pt0 = pd.pivot_table(df, index=['Статья'], values=['ДС'], columns=['Год'], aggfunc='sum', fill_value='', margins=False).round(2)
+pt0 = pt0['ДС']
+pt0 = pt0.transpose()
+pt0['Марж.прибыль'] = pt0['Продажи'] + pt0['Себестоимость']
 
-pt00 = pt00['ДС']
+# вот так исправляю формат числа:
+pt00 = pt0.style.format(precision=1, thousands=" ", decimal=",")
 
-pt00 = pt00.transpose()
+# по годоам и месяцам
+pt1 = pd.pivot_table(df, index=['Статья'], values=['ДС'], columns=['Год', 'Месяц'], aggfunc='sum', fill_value='', margins=False).round(2)
+pt1 = pt1['ДС']
+pt1 = pt1.transpose()
+pt1['Марж.прибыль'] = pt1['Продажи'] + pt1['Себестоимость']
+pt1['Маржа_%'] = (pt1['Марж.прибыль']/pt1['Продажи'])*100
 
-pt00['Марж.прибыль'] = pt00['Продажи'] + pt00['Себестоимость']
+# st.dataframe(pt1.loc[:, "Маржа_%"])
 
+
+
+# вот так исправляю формат числа:
+pt01 = pt1.style.format(precision=1, thousands=" ", decimal=",")
+
+
+
+# для метрик в отдельных квадратах:
+sales = (pt0.loc[:,'Продажи'].sum()/1000).round(2)
+marg = (pt0['Марж.прибыль'].sum()/1000).round(1)
+marg_pr = (pt0['Марж.прибыль'].sum()/(pt0['Продажи'].sum())*100).round(1)
+
+
+#---------------------------------------------------
 st.divider()
 st.subheader('Section 2')
 st.header(":blue[Продажи и маржинальный доход]")
 
-st.subheader("Выходные таблицы и графики")
-
-st.markdown("***Таблица продаж, себестоимости и марж.прибыли (тыс.руб.)***")
-st.table(pt00)
-
-# вот так исправляю формат числа:
-pt01 = pt00.style.format(precision=1, thousands=" ", decimal=",")
-
-st.table(pt01)
-
-st.markdown("***График продаж, себестоимости и марж.прибыли (тыс.руб.)***")
-
-st.bar_chart(pt00, stack=False, width=200, height=500)
-
-
-
-# st.area_chart(pt00)
-st.line_chart(pt01)
-
-
 st.divider()
-
-st.subheader("Разделение на столбцы")
-
-col1, col2 = st.columns(2)
-
-with col1:
-    st.write("Таблица")
-    st.table(pt01)
-
-with col2:
-    st.write("График")
-    st.bar_chart(pt00, stack=False)
 
 
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.metric("Продажи всего (млн.руб.): ",value=(pt00['Продажи'].sum()/1000).round(2))
+    st.metric(label="Продажи всего (млн.руб.): ",value=sales, delta='-Снижаются')
+    
 
 with col2:
-    st.metric("Марж.прибыль всего (млн.руб.): ",value=(pt00['Марж.прибыль'].sum()/1000).round(1))
+    st.metric("Марж.прибыль всего (млн.руб.): ",value=marg)
+    
 
 with col3:
-    st.metric("Рент-ть по марж.прибыли (%) всего: ",value=(pt00['Марж.прибыль'].sum()/(pt00['Продажи'].sum())*100).round(1))
+    st.metric("Рент-ть по марж.прибыли (%) всего: ",value=marg_pr)
+    
 
+
+
+col1, col2 = st.columns(2)
+with col1:
+    st.markdown("***Таблица продаж, себестоимости и марж.прибыли (тыс.руб.)***")
+    st.table(pt00)
+
+with col2:
+    st.markdown("***График продаж, себестоимости и марж.прибыли (тыс.руб.)***")
+    st.bar_chart(pt00, y_label="тыс.руб.", stack=False, width=200, height=600)
 
 st.divider()
+st.subheader("Данные по годам и месяцам:")
+# st.dataframe(pt01)
+st.table(pt01)
+
+
+
+
+#-------------------------------------------
+st.divider()
 st.subheader('Section 3')
-st.header(":blue[Себестоимость]")
+st.header(":blue[Анализ продаж по покупателям]")
 
 st.write("Раздел находится в разработке")
 
-
+#-------------------------------------------
 st.divider()
 st.subheader('Section 4')
 st.header(":blue[Рабочий капитал]")
 
 st.write("Раздел находится в разработке")
+
+
+
+st.write('''
+        Log работы:\n
+        2024-11-29 12:30 start \n
+        2024-11-30 18:00 Git - GitHub - Streamlit.io \n
+         2024-12-01 15:20 development and evolution \n
+        Smolenishev Oleg
+        ''')
