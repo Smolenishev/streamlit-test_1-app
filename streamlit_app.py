@@ -9,7 +9,7 @@ import os
 
 st.set_page_config(page_title="Smolenishev / otter-finance.ru", layout="wide")
 
-st.title(':blue[Демонстрация возвожностей Streamlit для базовых дашбордов на основе данных из 1С]')
+st.title(':blue[Презентация функционала Streamlit для создания простых информационных панелей на основе данных из 1С]')
 
 st.subheader('Сайт автора: [otter-finance.ru](https://otter-finance.ru)')
 
@@ -38,10 +38,11 @@ st.sidebar.markdown('''
 st.divider()
 st.subheader('Section 1')
 st.header(":blue[Источники данных]")
-st.subheader("Чтение файла xlsx с выгруженными бух. транзакциями из 1С. Источник: ДЕМО-база")
+st.subheader("Чтение файла xlsx с выгруженными бух. транзакциями из 1С")
 
 
-#---------------------------------------------------
+#--------- начало блока подготовки данных ---------------
+
 df = pd.read_excel('base1.xlsx', sheet_name='base')
 
 st.table(df.head(2))
@@ -92,7 +93,8 @@ pt0['Марж.прибыль'] = pt0['Продажи'] + pt0['Себестоим
 pt00 = pt0.style.format(precision=1, thousands=" ", decimal=",")
 
 # по годоам и месяцам
-pt1 = pd.pivot_table(df, index=['Статья'], values=['ДС'], columns=['Год', 'Месяц'], aggfunc='sum', fill_value='', margins=False).round(2)
+# pt1 = pd.pivot_table(df, index=['Статья'], values=['ДС'], columns=['Год', 'Месяц'], aggfunc='sum', fill_value='', margins=False).round(2)
+pt1 = pd.pivot_table(df, index=['Статья'], values=['ДС'], columns=['YM'], aggfunc='sum', fill_value='', margins=False).round(2)
 pt1 = pt1['ДС']
 pt1 = pt1.transpose()
 pt1['Марж.прибыль'] = pt1['Продажи'] + pt1['Себестоимость']
@@ -105,12 +107,31 @@ pt1['Маржа_%'] = (pt1['Марж.прибыль']/pt1['Продажи'])*100
 # вот так исправляю формат числа:
 pt01 = pt1.style.format(precision=1, thousands=" ", decimal=",")
 
-
-
 # для метрик в отдельных квадратах:
 sales = (pt0.loc[:,'Продажи'].sum()/1000).round(2)
 marg = (pt0['Марж.прибыль'].sum()/1000).round(1)
 marg_pr = (pt0['Марж.прибыль'].sum()/(pt0['Продажи'].sum())*100).round(1)
+
+# для продаж по месяцам
+df90 = df[df['SK']=='90.01.1']
+pt90_1 = pd.pivot_table(df90, index=['YM'], values=['ДС'], aggfunc='sum', fill_value=0, margins=False)/1000
+pt90_1.reset_index(inplace=True)
+pt90_1['YM'] = pt90_1['YM'].astype('str')
+
+# для маржи по месяцам
+pt90_m = pt1[['Маржа_%']]
+pt90_m.reset_index(inplace=True)
+pt90_m['YM'] = pt90_m['YM'].astype('str')
+
+# для продаж по покупателям
+
+pt90_p = pd.pivot_table(df90, index=['SKD1'], values=['ДС'], columns= ['Год'], aggfunc='sum', fill_value=0, margins=True)/1000
+pt90_p = pt90_p['ДС']
+pt90_p.sort_values(by='All', ascending=False, inplace=True)
+pt90_p = pt90_p.style.format(precision=1, thousands=" ", decimal=",")
+
+#--------- окочание блока подготовки данных ---------------
+
 
 
 #---------------------------------------------------
@@ -149,6 +170,13 @@ with col2:
 st.divider()
 st.subheader("Данные по годам и месяцам:")
 # st.dataframe(pt01)
+st.write("График продаж (млн.руб.)")
+st.bar_chart(pt90_1, x="YM", y="ДС", y_label="млн.руб.", stack=False) # , width=800, height=600
+
+st.write("График рентабельности по марж. прибыли (%)")
+st.area_chart(pt90_m, x="YM", y="Маржа_%", y_label="%", color="#FF0000")
+
+st.write("Таблица продаж, марж.прибыли (тыс.руб.) и рентабельности (%)")
 st.table(pt01)
 
 
@@ -158,8 +186,10 @@ st.table(pt01)
 st.divider()
 st.subheader('Section 3')
 st.header(":blue[Анализ продаж по покупателям]")
+st.write("Таблица продаж по покупателям (млн.руб.). Сортировка по убыванию:")
+st.table(pt90_p)
 
-st.write("Раздел находится в разработке")
+
 
 #-------------------------------------------
 st.divider()
@@ -171,9 +201,10 @@ st.write("Раздел находится в разработке")
 
 
 st.write('''
-        Log работы:\n
+        Log:\n
         2024-11-29 12:30 start \n
         2024-11-30 18:00 Git - GitHub - Streamlit.io \n
-         2024-12-01 15:20 development and evolution \n
+        2024-12-01 15:20 development and evolution \n
+        2024-12-02 22:50 add graph month, tabl customer \n
         Smolenishev Oleg
         ''')
