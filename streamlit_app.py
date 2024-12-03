@@ -4,8 +4,7 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 import os
-import xlsxwriter
-import openpyxl
+
 
 st.set_page_config(page_title="Smolenishev / otter-finance.ru", layout="wide")
 

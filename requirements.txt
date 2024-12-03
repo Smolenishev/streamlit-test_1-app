@@ -1,6 +1,4 @@
 streamlit
-xlsxwriter
-openpyxl
 pandas
 numpy
 os
