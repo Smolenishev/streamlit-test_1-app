@@ -29,7 +29,7 @@ st.sidebar.markdown('''
     - [Источники](#section-1)
     - [Продажи и маржа](#section-2) 
     - [Анализ продаж по покупателям](#section-3)
-    - [Рабочий капитал](#section-4)
+    - [Анализ продаж по номенклатуре](#section-4)
     ''', unsafe_allow_html=True)
 
 
@@ -38,6 +38,7 @@ st.divider()
 st.subheader('Section 1')
 st.header(":blue[Источники данных]")
 st.subheader("Чтение файла xlsx с выгруженными бух. транзакциями из 1С")
+st.write("файл xlsx: 4,9 Mb, 42 тыс.строк - загружается примерно 30 сек.")
 
 
 #--------- начало блока подготовки данных ---------------
@@ -129,6 +130,13 @@ pt90_p = pt90_p['ДС']
 pt90_p.sort_values(by='All', ascending=False, inplace=True)
 pt90_p = pt90_p.style.format(precision=1, thousands=" ", decimal=",")
 
+# для продаж по номенклатуре
+
+pt90_n = pd.pivot_table(df90, index=['SKK3'], values=['ДС'], columns= ['Год'], aggfunc='sum', fill_value=0, margins=True)/1000
+pt90_n = pt90_n['ДС']
+pt90_n.sort_values(by='All', ascending=False, inplace=True)
+pt90_n = pt90_n.style.format(precision=1, thousands=" ", decimal=",")
+
 #--------- окочание блока подготовки данных ---------------
 
 
@@ -193,9 +201,10 @@ st.table(pt90_p)
 #-------------------------------------------
 st.divider()
 st.subheader('Section 4')
-st.header(":blue[Рабочий капитал]")
+st.header(":blue[Анализ продаж по номенклатуре]")
+st.write("Таблица продаж по номенклатуре (млн.руб.). Сортировка по убыванию:")
+st.table(pt90_n)
 
-st.write("Раздел находится в разработке")
 
 
 
