@@ -38,7 +38,7 @@ st.divider()
 st.subheader('Section 1')
 st.header(":blue[Источники данных]")
 st.subheader("Чтение файла xlsx с выгруженными бух. транзакциями из 1С")
-st.write("файл xlsx: 4,9 Mb, 42 тыс.строк - загружается примерно 30 сек.")
+st.write("файл xlsx: 6,1 Mb, 42 тыс.строк - загружается примерно 30 сек.")
 
 
 #--------- начало блока подготовки данных ---------------
@@ -125,14 +125,14 @@ pt90_m['YM'] = pt90_m['YM'].astype('str')
 
 # для продаж по покупателям
 
-pt90_p = pd.pivot_table(df90, index=['SKD1'], values=['ДС'], columns= ['Год'], aggfunc='sum', fill_value=0, margins=True)/1000
+pt90_p = pd.pivot_table(df90, index=['SKD1'], values=['ДС'], columns= ['Год'], aggfunc='sum', fill_value=0, margins=True)
 pt90_p = pt90_p['ДС']
 pt90_p.sort_values(by='All', ascending=False, inplace=True)
 pt90_p = pt90_p.style.format(precision=1, thousands=" ", decimal=",")
 
 # для продаж по номенклатуре
 
-pt90_n = pd.pivot_table(df90, index=['SKK3'], values=['ДС'], columns= ['Год'], aggfunc='sum', fill_value=0, margins=True)/1000
+pt90_n = pd.pivot_table(df90, index=['SKK3'], values=['ДС'], columns= ['Год'], aggfunc='sum', fill_value=0, margins=True)
 pt90_n = pt90_n['ДС']
 pt90_n.sort_values(by='All', ascending=False, inplace=True)
 pt90_n = pt90_n.style.format(precision=1, thousands=" ", decimal=",")
@@ -193,7 +193,7 @@ st.table(pt01)
 st.divider()
 st.subheader('Section 3')
 st.header(":blue[Анализ продаж по покупателям]")
-st.write("Таблица продаж по покупателям (млн.руб.). Сортировка по убыванию:")
+st.write("Таблица продаж по покупателям (тыс.руб.). Сортировка по убыванию:")
 st.table(pt90_p)
 
 
@@ -202,7 +202,7 @@ st.table(pt90_p)
 st.divider()
 st.subheader('Section 4')
 st.header(":blue[Анализ продаж по номенклатуре]")
-st.write("Таблица продаж по номенклатуре (млн.руб.). Сортировка по убыванию:")
+st.write("Таблица продаж по номенклатуре (тыс.руб.). Сортировка по убыванию:")
 st.table(pt90_n)
 
 
