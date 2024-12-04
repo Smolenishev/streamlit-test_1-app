@@ -3,3 +3,5 @@ xlsxwriter
 openpyxl
 pandas
 numpy
+plotly
+altair
