@@ -14,6 +14,7 @@ st.title(':blue[Презентация функционала Streamlit для �
 
 st.subheader('Сайт автора: [otter-finance.ru](https://otter-finance.ru)')
 st.write('Скрипт и демо-данные расположены: [https://github.com/Smolenishev/streamlit-test_1-app](https://github.com/Smolenishev/streamlit-test_1-app)')
+st.write('Также расположил в Российском репозитории GitVerse: [https://gitverse.ru/smolenishev/streamlit-test_1-app](https://gitverse.ru/smolenishev/streamlit-test_1-app)')
 
 
 
@@ -45,7 +46,7 @@ st.divider()
 st.subheader('Section 1')
 st.header(":blue[Источники данных]")
 st.subheader("Чтение файла xlsx с выгруженными бух. транзакциями из 1С")
-st.write("файл xlsx: 6,1 Mb, 42 тыс.строк - загружается примерно 30 сек.")
+st.write("файл xlsx: 3,9 Mb, 25,8 тыс.строк - загружается примерно 20 сек.")
 
 #------------Окончание подзаголовока---------------------------------
 
@@ -102,6 +103,14 @@ pt0 = pd.pivot_table(df, index=['Статья'], values=['ДС'], columns=['Го
 pt0 = pt0['ДС']
 pt0 = pt0.transpose()
 pt0['Марж.прибыль'] = pt0['Продажи'] + pt0['Себестоимость']
+pt0['Маржа_%'] = ((pt0['Марж.прибыль'] / pt0['Продажи'])*100).round(1)
+# st.table(pt0)
+
+# для графика
+pt000 = pt0[['Продажи', 'Марж.прибыль']]
+pt001 = pt000.rename({"Продажи": "1_Продажи", "Марж.прибыль": "2_Марж.прибыль"}, axis='columns')
+
+
 
 # вот так исправляю формат числа:
 pt00 = pt0.style.format(precision=1, thousands=" ", decimal=",")
@@ -125,6 +134,21 @@ pt01 = pt1.style.format(precision=1, thousands=" ", decimal=",")
 sales = (pt0.loc[:,'Продажи'].sum()/1000).round(2)
 marg = (pt0['Марж.прибыль'].sum()/1000).round(1)
 marg_pr = (pt0['Марж.прибыль'].sum()/(pt0['Продажи'].sum())*100).round(1)
+
+# измененя за год
+sales2021 = pt0.iloc[0, 0]
+sales2022 = pt0.iloc[1, 0]
+delta_sales = ((sales2022 - sales2021)/1000).round(1)
+
+marg2021 = pt0.iloc[0, 2]
+marg2022 = pt0.iloc[1, 2]
+delta_marg = ((marg2022 - marg2021)/1000).round(1)
+
+marg_p2021 = pt0.iloc[0, 3]
+marg_p2022 = pt0.iloc[1, 3]
+delta_marg_p = (marg_p2022 - marg_p2021).round(1)
+
+
 
 # для продаж по месяцам
 df90 = df[df['SK']=='90.01.1']
@@ -172,27 +196,27 @@ st.divider()
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.metric(label="Продажи всего (млн.руб.): ",value=sales, delta='-Снижаются')
+    st.metric(label="Продажи всего (млн.руб.): ",value=sales, delta=delta_sales)
     
 
 with col2:
-    st.metric("Марж.прибыль всего (млн.руб.): ",value=marg)
+    st.metric("Марж.прибыль всего (млн.руб.): ",value=marg, delta=delta_marg)
     
 
 with col3:
-    st.metric("Рент-ть по марж.прибыли (%) всего: ",value=marg_pr)
+    st.metric("Рент-ть по марж.прибыли (%) всего: ",value=marg_pr, delta=delta_marg_p)
     
 
 
 
 col1, col2 = st.columns(2)
 with col1:
-    st.markdown("***Таблица продаж, себестоимости и марж.прибыли (тыс.руб.)***")
+    st.markdown("***Таблица продаж и марж.прибыли (тыс.руб.)***")
     st.table(pt00)
 
 with col2:
-    st.markdown("***График продаж, себестоимости и марж.прибыли (тыс.руб.)***")
-    st.bar_chart(pt00, y_label="тыс.руб.", stack=False, width=200, height=600)
+    st.markdown("***График продаж и марж.прибыли (тыс.руб.)***")
+    st.bar_chart(pt001, y_label="тыс.руб.", stack=False, width=200, height=400)
 
 st.divider()
 st.subheader("Данные по годам и месяцам:")
@@ -263,7 +287,8 @@ st.write('''
         2024-11-29 12:30 start \n
         2024-11-30 18:00 Git - GitHub - Streamlit.io \n
         2024-12-01 15:20 development and evolution \n
-        2024-12-02 22:50 add graph month, tabl customer \n
+        2024-12-02 22:50 add graph month, table customer \n
         2024-12-04 22:00 add graph Plotly, Altair \n
+        2024-12-05 23:30 clear df \n
         Smolenishev Oleg
         ''')
