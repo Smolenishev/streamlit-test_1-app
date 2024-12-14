@@ -36,7 +36,8 @@ st.sidebar.markdown('''
     - [Покупатели](#section-3)
     - [Номенклатура продаж](#section-4)
     - [Treemap Покупатели](#section-5)
-    - [Treemap Номенклатура](#section-6)                
+    - [Treemap Номенклатура](#section-6)
+    - [Аналитика по номенклатуре](#section-7)                
     ''', unsafe_allow_html=True)
 
 #---------------Окончание боковой панели------------------
@@ -280,8 +281,35 @@ Chart_trm_2  = px.treemap(pt90_pn, path=[px.Constant('all'), 'Год', 'SKK3', '
 st.plotly_chart(Chart_trm_2)
 
 
-#----------Подвал--------------
+#-------------------------------------------
+st.divider()
+st.subheader('Section 7')
+st.header(":blue[Аналитика по выбранной номенклатуре товара]")
+st.subheader('Выберете номенклатуру из списка: ')
 
+item_options = df['SKK3'].unique()
+item_selection = st.selectbox("Выберите номенклатуру товара: ", options=item_options, index=1)
+filtered_df = df[df['SKK3'] == item_selection]
+# st.dataframe(filtered_df)
+pt_item = pd.pivot_table(filtered_df, index='YM', values='Продажи', fill_value=0, margins=False).round(1)
+# pt_item = pd.pivot_table(filtered_df, columns='YM', values='Продажи', fill_value=0, margins=False).round(1)
+
+pt_item.reset_index(inplace=True)
+pt_item['YM'] = pt_item['YM'].astype('str')
+
+col1, col2 = st.columns([1, 3])
+
+with col1:
+    st.subheader('Таблица продаж по месяцам')
+    st.dataframe(pt_item)
+
+with col2:
+    st.subheader('График продаж по месяцам')
+    st.bar_chart(pt_item, x='YM', y_label="тыс.руб.", stack=False)
+
+
+#----------Подвал--------------
+st.divider()
 st.write('''
         Log:\n
         2024-11-29 12:30 start \n
@@ -290,5 +318,6 @@ st.write('''
         2024-12-02 22:50 add graph month, table customer \n
         2024-12-04 22:00 add graph Plotly, Altair \n
         2024-12-05 23:30 clear df \n
+        2024-12-14 15:30 add item \n
         Smolenishev Oleg
         ''')
